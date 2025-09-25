@@ -39,7 +39,7 @@ void myvector_push_back(MyVector* v, int value){
         int* tmp = new int[v->size];
         for (int i = 0; i < v->size; ++i) tmp[i] = v->data[i];
         delete[]v->data;
-        v->data = new int(v->capacity);
+        v->data = new int[v->capacity];
         for (int i = 0; i < v->size; ++i) v->data[i] = tmp[i];
         delete[]tmp;
         ++v->size;
