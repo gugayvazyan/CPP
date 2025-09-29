@@ -1,7 +1,6 @@
 #ifndef MY_VECTOR_H
 #define MY_VECTOR_H
 
-
 struct MyVector {
     int* data;
     size_t size;
@@ -11,7 +10,8 @@ struct MyVector {
 void myvector_init(MyVector*, size_t);
 void myvector_init(MyVector*, size_t, int);
 
-
+void realloc_helper(MyVector*);
+ 
 void myvector_destroy(MyVector*);
 void myvector_clear(MyVector*);
 
@@ -25,8 +25,6 @@ void myvector_insert(MyVector*, size_t, int);
 void myvector_erase(MyVector*, size_t);
 
 void myvector_print(const MyVector*);
-
-
 
 
 
