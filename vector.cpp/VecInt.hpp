@@ -2,7 +2,7 @@
 #define VECINT_HPP
 
 
-#include <cstddef>
+
 #include <initializer_list>
 #include <iostream>
 
@@ -40,5 +40,6 @@ class VecInt {
         
         void print() const;
 };
+
 
 #endif //VECINT_HPP
