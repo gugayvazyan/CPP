@@ -22,24 +22,24 @@ void Person_ctor_i(Person* const this, char* n, int a, double h){
 }
 
 // Getters
-const char* getName(Person* const this) { return this->name; }
-const int getAge(Person* const this) { return this->age; }
-const double getHeight(Person* const this) { return this->height; }
+const char* getName(const Person* const this) { return this->name; }
+const int getAge(const Person* const this) { return this->age; }
+const double getHeight(const Person* const this) { return this->height; }
 
 void setName(Person* const this,const char* n) { strcpy(this->name, n); }
 void setAge(Person* const this,int a) { this->age = a; }
 void setHeight(Person* const this,double h) { this->height = h; }
 
 // Overloaded member functions
-void printInfo(Person* const this) { printf("Name: %s, Age: %d, Height: %0.2f\n", this->name, this->age, this->height); }
+void printInfo(const Person* const this) { printf("Name: %s, Age: %d, Height: %0.2f\n", this->name, this->age, this->height); }
 
-void printInfo_b(Person* const this,bool showHeight) {
+void printInfo_b(const Person* const this,bool showHeight) {
     printf("Name: %s, Age: %d", this->name, this->age);
     if(showHeight) printf(", Height: %0.2f", this->height);
     printf("\n");
 }
 
-void Person_dtor(Person* const this) {}
+void Person_dtor(const Person* const this) {}
 
 int main() {
     Person p1;
