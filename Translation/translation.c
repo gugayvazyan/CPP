@@ -39,7 +39,7 @@ void printInfo_b(const Person* const this,bool showHeight) {
     printf("\n");
 }
 
-void Person_dtor(const Person* const this) {}
+void Person_dtor(Person* const this) {}
 
 int main() {
     Person p1;
