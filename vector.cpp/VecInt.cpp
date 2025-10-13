@@ -1,31 +1,64 @@
 #include "VecInt.hpp"
 
-VecInt::VecInt() : data(nullptr), _size(0), _capacity(0) {}
-
 
 VecInt::VecInt(std::size_t n, int val) : data(new int[n]), _size(n), _capacity(n) {
-    for (std::size_t i = 0; i < n; ++i) data[i] = val;
+        for (std::size_t i = 0; i < n; ++i) data[i] = val;
 }
-
-
 VecInt::VecInt(std::initializer_list<int> init): data(new int[init.size()]), _size(0), _capacity(init.size()) {
-    for (int val : init) data[_size++] = val;
+        for (int val : init) data[_size++] = val;
 }
-
-
 VecInt::VecInt(const VecInt& other) : data(new int[other._capacity]), _size(other._size), _capacity(other._capacity) {
-    for (std::size_t i = 0; i < _size; ++i) data[i] = other.data[i];
+        for (std::size_t i = 0; i < _size; ++i) data[i] = other.data[i];
 }
+VecInt::VecInt(VecInt&& other) : data(other.data), _size(other._size), _capacity(other._capacity) {
+    other.data = nullptr;
+    other._size = 0;
+    other._capacity = 0;
+}
+VecInt& VecInt::operator= (const VecInt& other) {
+        
+        if (this == &other) return *this;
 
+       
+        if(data) delete[] data;
+
+        
+        data = new int[other._capacity];
+        _size = other._size;
+        _capacity = other._capacity;
+
+       
+        for (size_t i = 0; i < _size; ++i)
+            data[i] = other.data[i];
+
+        return *this;
+
+}
+VecInt& VecInt::operator= ( VecInt&& other) {
+        
+        if (this == &other) return *this;
+
+       
+        if(data) delete[] data;
+
+        
+        data = new int[other._capacity];
+        _size = other._size;
+        _capacity = other._capacity;
+
+       
+        for (size_t i = 0; i < _size; ++i)
+            data[i] = other.data[i];
+
+            
+        other._size = 0;
+        other._capacity = 0;
+        if(other.data) delete[] other.data;
+        return *this;
+
+}
 
 VecInt::~VecInt() { delete[] data;}
-
-
-
-size_t VecInt::size() const { return _size; }
-size_t VecInt::capacity() const { return _capacity; }
-
-
 
 void VecInt::realloc_helper() {
     _capacity = (_capacity == 0) ? 1 : _capacity * 2;
@@ -67,6 +100,6 @@ void VecInt::insert(std::size_t ind, int val) {
 void VecInt::myvector_clear() { _size = 0; }
 
 void VecInt::print() const {
-for (size_t i = 0; i < _size; ++i) std::cout << data[i] << " ";
-std::cout << std::endl;
+    for (size_t i = 0; i < _size; ++i) std::cout << data[i] << " ";
+    std::cout << std::endl;
 }
