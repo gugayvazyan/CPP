@@ -1,38 +1,42 @@
 #include "Rational.hpp"
 
-//Constructors
-Rational::Rational(int num, int denum) {
-    if (denum == 0) std::cout << "Denum cant be 0" <<  std::exit;
 
-    if(denum < 0 && num > 0) {
+void Rational::reduce_helper() {
+    int gcd = std::gcd(num, denum);
+    num /= gcd;
+    denum /= gcd;
+}
+//Constructors
+Rational::Rational(int _num, int _denum) : num{_num}, denum{_denum} {
+    if (denum == 0) {
+        std::cout << "Denum cant be 0" << std::endl;
+        std::exit;
+    }
+
+    if(denum < 0) {
         denum = -denum;
         num = -num;
     }  
-    int gcd = (num < denum) ? num : denum;
-    while(num % gcd != 0 && denum % gcd != 0 ) {
-        --gcd;
-    }
-    num /= gcd;
-    denum /= gcd;
-    this->denum = denum;
-    this->num = num;
+    reduce_helper();
 }
-Rational::Rational(Rational&& obj){
+
+Rational::Rational(Rational&& obj) : num{obj.num}, denum{obj.denum} {
         obj.num = 0;
         obj.denum = 0;
 }
-Rational &Rational :: operator= (const Rational& obj) {
-    if(this == &obj) {return *this;}
+
+Rational& Rational::operator=(const Rational& obj) {
+    if(this == &obj) return *this;
 
     this->denum = obj.denum;
-    this-> num = obj.num;
+    this->num = obj.num;
 
     return *this;
 }
-Rational& Rational::operator=(Rational&& obj) noexcept {
-    if (this == &obj) {
-        return *this;
-    }
+
+Rational& Rational::operator=(Rational&& obj) {
+    if (this == &obj) return *this;
+    
     this->num = obj.num;
     this->denum = obj.denum;
 
@@ -44,33 +48,37 @@ Rational& Rational::operator=(Rational&& obj) noexcept {
 
 
 //Unary operators
-Rational &Rational:: operator+ (const Rational& obj){
-        Rational obj1(obj.num, obj.denum);
-        return obj1; 
-}
-Rational &Rational:: operator- (const Rational& obj){
-    Rational obj1(obj.num, obj.denum);
-    obj1.num *= -1;
-    return obj1;
-}
-Rational &Rational::operator++(){
-    this->num += this->denum;
+Rational Rational::operator+(){
     return *this;
 }
+
+Rational Rational:: operator-(){
+    return Rational(-num, denum);
+}
+
+Rational& Rational::operator++(){
+    this->num += this->denum;
+    reduce_helper();
+    return *this;
+}
+
 Rational Rational::operator++(int) {
     Rational obj1(num, denum);
     this->num += this->denum;
     return obj1;
 }
+
 Rational &Rational::operator--(){
     this->num -= this->denum;
     return *this;
 }
+
 Rational Rational::operator--(int) {
     Rational obj1(num, denum);
     this->num -= this->denum;
     return obj1;
 }
+
 bool Rational::operator!() const {
     return num == 0;
 }
@@ -79,7 +87,6 @@ bool Rational::operator!() const {
 //Binary arithmetic operators
     //Member
 Rational &Rational::operator+= (const Rational& obj){
-    
     int lcm = std::lcm(this->denum, obj.denum);
 
     int tmp = lcm / this->denum;
@@ -87,13 +94,11 @@ Rational &Rational::operator+= (const Rational& obj){
 
     this->num = this->num * tmp + obj.num * tmp1;
     this->denum = lcm;
-    
-    int gcd = std::gcd(this->num, this->denum);
-    this->num /= gcd;
-    this->denum /= gcd;
 
+    reduce_helper();
     return *this; 
 }
+
 Rational &Rational::operator-= (const Rational& obj){
     int lcm = std::lcm(this->denum, obj.denum);
 
@@ -103,20 +108,15 @@ Rational &Rational::operator-= (const Rational& obj){
     this->num = this->num * tmp - obj.num * tmp1;
     this->denum = lcm;
 
-    int gcd = std::gcd(this->num, this->denum);
-    this->num /= gcd;
-    this->denum /= gcd;
-
+    reduce_helper();
     return *this; 
 }
+
 Rational &Rational::operator*= (const Rational& obj) {
-    if (this->denum == 0 || obj.denum == 0 ) std::cout << "Denum cant be 0" <<  std::exit;
     this->num *= obj.num;
     this->denum *= obj.denum;
 
-    int gcd = std::gcd(this->num, this->denum);
-    this->num /= gcd;
-    this->denum /= gcd;
+    reduce_helper();
 
       if (this->denum < 0) {
         this->denum =  -this->denum ;
@@ -126,8 +126,10 @@ Rational &Rational::operator*= (const Rational& obj) {
     return *this;
 }
 Rational &Rational::operator/= (const Rational& obj) {
-    if (obj.num == 0) std::cout << "Num cant be 0" <<  std::exit;
-
+     if (num == 0) {
+        std::cout << "Num cant be 0" << std::endl;
+        std::exit;
+    }
     
     this->num *= obj.denum;
     this->denum *= obj.num;
@@ -147,7 +149,7 @@ Rational &Rational::operator/= (const Rational& obj) {
 }
 
 //Non-member
-Rational operator+(Rational lhs, const Rational& rhs){
+Rational operator+(Rational lhs, const Rational& rhs) {
     if(lhs.denum == rhs.denum) {
         Rational obj(lhs.num + rhs.num, lhs.denum);
         return obj;
@@ -168,6 +170,7 @@ Rational operator+(Rational lhs, const Rational& rhs){
 
     return obj; 
 }
+
 Rational operator-(Rational lhs, const Rational& rhs){
     if(lhs.denum == rhs.denum) {
         Rational obj(lhs.num - rhs.num, lhs.denum);
@@ -189,9 +192,8 @@ Rational operator-(Rational lhs, const Rational& rhs){
 
     return obj; 
 }
+
 Rational operator*(Rational lhs, const Rational& rhs){
-    if (lhs.denum == 0 || rhs.denum == 0 ) std::cout << "Denum cant be 0" <<  std::exit;
-    
     Rational tmp(lhs.num, lhs.denum);
     tmp.num *= rhs.num;
     tmp.denum *= rhs.denum;
@@ -208,8 +210,6 @@ Rational operator*(Rational lhs, const Rational& rhs){
     return tmp;
 }
 Rational operator/(Rational lhs, const Rational& rhs){
-    if (lhs.denum == 0 || rhs.denum == 0 ) std::cout << "Denum cant be 0" <<  std::exit;
-    
     Rational tmp(lhs.num, lhs.denum);
     tmp.num *= rhs.denum;
     tmp.denum *= rhs.num;
@@ -228,41 +228,43 @@ Rational operator/(Rational lhs, const Rational& rhs){
 
 // Comparison operators
 bool operator==(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 == tmp2;
 }
+
 bool operator!=(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 != tmp2;
 }
 bool operator<(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 < tmp2;
 }
 bool operator<=(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 <= tmp2;
 }
 bool operator>(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 > tmp2;
 }
 bool operator>=(const Rational& lhs, const Rational& rhs){
-    int tmp1 = lhs.num / lhs.denum;
-    int tmp2 = rhs.num / rhs.denum;
+    float tmp1 = lhs.num / lhs.denum;
+    float tmp2 = rhs.num / rhs.denum;
     return tmp1 >= tmp2;
 }
 
 //Stream operators
-std::ostream& operator<<(std::ostream& os, const Rational& r) {
-    os << "Rational: " << r.num << "/" << r.denum;
-    return os;
+std::ostream& operator<<(std::ostream& ost, const Rational& r) {
+    ost << "Rational: " << r.num << "/" << r.denum << std::endl;
+    return ost;
 }
+
 std::istream& operator>>(std::istream& is, Rational& r) {
     is >> r.num;
     is >> r.denum;
@@ -270,14 +272,14 @@ std::istream& operator>>(std::istream& is, Rational& r) {
 }
 
 //Accessors
-int Rational::numerator() const noexcept {
+int Rational::numerator() const {
     return this->num;
 }
-int Rational::denominator() const noexcept {
+int Rational::denominator() const {
     return this->denum;
 }
 
 //Optional conversions
 Rational::operator double() const {
-    return this->num / this->denum;
+    return (double)this->num / (double)this->denum;
 }
