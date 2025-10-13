@@ -118,11 +118,6 @@ Rational &Rational::operator*= (const Rational& obj) {
 
     reduce_helper();
 
-      if (this->denum < 0) {
-        this->denum =  -this->denum ;
-        this->num = -this->num;
-    }
-
     return *this;
 }
 Rational &Rational::operator/= (const Rational& obj) {
@@ -150,25 +145,9 @@ Rational &Rational::operator/= (const Rational& obj) {
 
 //Non-member
 Rational operator+(Rational lhs, const Rational& rhs) {
-    if(lhs.denum == rhs.denum) {
-        Rational obj(lhs.num + rhs.num, lhs.denum);
-        return obj;
-    }
-
-    Rational obj(lhs.num, lhs.denum);
-    int lcm = std::lcm(obj.denum, rhs.denum);
-
-    int tmp = lcm / obj.denum;
-    int tmp1 = lcm / rhs.denum;
-
-    obj.num = obj.num * tmp + rhs.num * tmp1;
-    obj.denum = lcm;
+    lhs += rhs;
+    return lhs;
     
-    int gcd = std::gcd(obj.num, obj.denum);
-    obj.num /= gcd;
-    obj.denum /= gcd;
-
-    return obj; 
 }
 
 Rational operator-(Rational lhs, const Rational& rhs){
@@ -282,4 +261,5 @@ int Rational::denominator() const {
 //Optional conversions
 Rational::operator double() const {
     return (double)this->num / (double)this->denum;
+
 }
